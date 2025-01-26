@@ -18,6 +18,11 @@ export default {
        lightGray: "hsl(223, 19%, 93%)",
        veryLightGray: "hsl(228, 33%, 97%)",
       },
+      fontFamily: {
+        rubikRegular: ["rubik-regular", "sans-serif"],
+        rubikBold: ["rubik-bold", "sans-serif"],
+        rubikLight: ["rubik-light", "sans-serif"],
+      }
     },
   },
   plugins: [],

@@ -15,7 +15,7 @@ const ReplyBox = ({replyingTo} : {replyingTo : string}) => {
             rows={3}
             name=""
             id=""
-            defaultValue={`  ${replyingTo ? '@'+replyingTo : "" }`}
+            value={replyingTo ? `@${replyingTo} ` : "" }
           ></textarea>
           <div>
             <button className="bg-moderateBlue hover:opacity-50 text-white  rounded-lg px-8 py-3">

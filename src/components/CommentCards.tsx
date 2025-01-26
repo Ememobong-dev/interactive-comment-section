@@ -7,9 +7,9 @@ import minusIcon from "../../public/images/icon-minus.svg";
 import replyIcon from "../../public/images/icon-reply.svg";
 import deleteIcon from "../../public/images/icon-delete.svg";
 import editIcon from "../../public/images/icon-edit.svg";
-// import ReplyBox from "./ReplyBox";
 
 type commentType = {
+  id: number;
   numberOfLikes: number;
   userImage: string;
   userName: string;
@@ -18,10 +18,12 @@ type commentType = {
   replies?: boolean;
   replyingTo?: string;
   isAuthorReply?: boolean;
-  handleReplyButton: VoidFunction
+  handleReplyButton: VoidFunction;
+  handleDelete: VoidFunction;
 };
 
 const CommentCards = ({
+  id,
   numberOfLikes,
   userImage,
   userName,
@@ -31,16 +33,22 @@ const CommentCards = ({
   replyingTo,
   isAuthorReply,
   handleReplyButton,
+  handleDelete,
 }: commentType) => {
   const [likeNum, setLikeNum] = useState(numberOfLikes);
+  const [editPostId, setEditPostId] = useState<number>();
 
-
+  
   const handleUpVote = () => {
     setLikeNum((prev) => prev + 1);
   };
 
   const handleDownVote = () => {
     setLikeNum((prev) => (prev - 1 >= 0 ? prev - 1 : prev));
+  };
+
+  const handleEdit = (id: number) => {
+    setEditPostId(id);
   };
 
 
@@ -62,7 +70,7 @@ const CommentCards = ({
               <Image src={minusIcon} alt="minus icon" />
             </span>
           </div>
-          <div className="flex flex-col gap-y-4">
+          <div className="flex w-full flex-col gap-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <span>
@@ -102,7 +110,8 @@ const CommentCards = ({
                 </div>
               ) : (
                 <div className="flex gap-8 cursor-pointer items-center">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center hover:opacity-50 gap-2"
+                  onClick={handleDelete}>
                     <span>
                       <Image src={deleteIcon} alt="reply icon" />
                     </span>
@@ -110,7 +119,10 @@ const CommentCards = ({
                       <p>Delete</p>
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div
+                    className="flex items-center hover:opacity-50  gap-2"
+                    onClick={() => handleEdit(id)}
+                  >
                     <span>
                       <Image src={editIcon} alt="reply icon" />
                     </span>
@@ -122,20 +134,32 @@ const CommentCards = ({
               )}
             </div>
             <div>
-              <span className="text-grayishBlue">
-                {replies && (
-                  <span className="text-moderateBlue font-bold">
-                    {" "}
-                    @{replyingTo}{" "}
-                  </span>
-                )}
-                {comment}
-              </span>
+              {editPostId === id ? (
+                <span>
+                  <textarea
+                    className="rounded-lg w-full focus:border-moderateBlue outline-0  border border-moderateBlue py-5 px-8 bg-white text-grayishBlue"
+                    name=""
+                    cols={35}
+                    rows={3}
+                    value={`@${replyingTo} ${comment}`}
+                  ></textarea>
+                </span>
+              ) : (
+                <span className="text-grayishBlue">
+                  {replies && (
+                    <span className="text-moderateBlue font-bold">
+                      {" "}
+                      @{replyingTo}{" "}
+                    </span>
+                  )}
+
+                  {comment}
+                </span>
+              )}
             </div>
           </div>
         </div>
       </div>
-      {/* {showReplyArea && <ReplyBox replyingTo={userName}  />} */}
     </>
   );
 };

@@ -3,9 +3,30 @@
 @tailwind utilities;
 
 
+@font-face{
+  font-family: 'rubik-regular';
+  src: url(../../public/fonts/Rubik/static/Rubik-Regular.ttf)
+}
+
+@font-face{
+  font-family: 'rubik-bold';
+  src: url(../../public/fonts/Rubik/static/Rubik-Bold.ttf)
+}
+
+@font-face{
+  font-family: 'rubik-light';
+  src: url(../../public/fonts/Rubik/static/Rubik-Light.ttf)
+}
+
+
 body {
   background: hsl(223, 19%, 93%) ;
   font-family: Arial, Helvetica, sans-serif;
   display: flex;
   justify-content: center;
+}
+
+.deleteModal .ant-modal-content{
+  padding: 30px 50px !important;
+
 }
