@@ -1,5 +1,7 @@
+"use client";
+
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import plusIcon from "../../public/images/icon-plus.svg";
 import minusIcon from "../../public/images/icon-minus.svg";
 import replyIcon from "../../public/images/icon-reply.svg";
@@ -27,21 +29,31 @@ const CommentCards = ({
   replyingTo,
   isAuthorReply,
 }: commentType) => {
+    const [likeNum, setLikeNum] = useState(numberOfLikes);
+
+    const handleUpVote = () => {
+        setLikeNum(prev => prev + 1)
+    }
+
+    const handleDownVote = () => {
+        setLikeNum(prev => prev - 1 > 0 ? prev - 1 : prev)
+    }
+
   return (
     <>
       <div className="bg-white w-full p-8 rounded-lg">
         <div className="flex items-center gap-8">
           <div className=" flex flex-col bg-lightGray rounded-lg py-3 px-3 items-center gap-3">
-            <span>
-              <Image src={plusIcon} alt="plus icon" />
+            <span className="cursor-pointer" onClick={handleUpVote}>
+              <Image src={plusIcon}  alt="plus icon" />
             </span>
             <span>
               <p className="text-moderateBlue text-base font-bold">
                 {" "}
-                {numberOfLikes}{" "}
+                {likeNum}{" "}
               </p>
             </span>
-            <span>
+            <span className="cursor-pointer" onClick={handleDownVote}>
               <Image src={minusIcon} alt="minus icon" />
             </span>
           </div>
@@ -72,7 +84,7 @@ const CommentCards = ({
                 </span>
               </div>
               {!isAuthorReply ? (
-                <div className="flex gap-2 cursor-pointer items-center">
+                <div className="flex gap-2 cursor-pointer hover:opacity-50 items-center">
                   <span>
                     <Image src={replyIcon} alt="reply icon" />
                   </span>
@@ -106,7 +118,7 @@ const CommentCards = ({
                 {replies && (
                   <span className="text-moderateBlue font-bold">
                     {" "}
-                    {replyingTo}{" "}
+                    @{replyingTo}{" "}
                   </span>
                 )}
                 {comment}

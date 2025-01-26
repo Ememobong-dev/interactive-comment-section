@@ -17,7 +17,7 @@ export default function Home() {
             />
 
             {comment.replies.length ? (
-              <div className="flex gap-8 pl-8 my-8">
+              <div className="flex gap-12 pl-12 my-8">
                 <div className="border-l-2 border-gray-300 "></div>
                 
                 <div className="flex flex-col gap-y-5">
