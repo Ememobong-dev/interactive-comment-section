@@ -38,7 +38,7 @@ const CommentCards = ({
   const [likeNum, setLikeNum] = useState(numberOfLikes);
   const [editPostId, setEditPostId] = useState<number>();
 
-  
+
   const handleUpVote = () => {
     setLikeNum((prev) => prev + 1);
   };
@@ -142,7 +142,7 @@ const CommentCards = ({
                     cols={35}
                     rows={3}
                     value={`@${replyingTo} ${comment}`}
-                  ></textarea>
+                  />
                 </span>
               ) : (
                 <span className="text-grayishBlue">

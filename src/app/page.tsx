@@ -92,13 +92,13 @@ export default function Home() {
         className="deleteModal"
       >
         <div className="flex flex-col gap-y-4">
-          <h3 className="text-darkBlue font-bold text-2xl">Delete Comment</h3>
-          <p className="text-grayishBlue">
+          <h3 className="text-darkBlue font-rubikLight font-bold text-2xl">Delete Comment</h3>
+          <p className="text-grayishBlue text-base font-rubikRegular">
             Are you sure you want to delete this comment? This will remove the
             comment and can&apos;t be undone.
           </p>
-          <div className="flex gap-5">
-            <button className="py-3 px-8 text-white rounded-lg bg-grayishBlue">
+          <div className="flex gap-5 font-rubikLight font-bold ">
+            <button className="py-3 px-8 text-white  rounded-lg bg-grayishBlue">
               NO, CANCEL
             </button>
             <button className="py-3 px-8 text-white rounded-lg bg-softRed">

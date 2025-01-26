@@ -16,9 +16,9 @@ const ReplyBox = ({replyingTo} : {replyingTo : string}) => {
             name=""
             id=""
             value={replyingTo ? `@${replyingTo} ` : "" }
-          ></textarea>
+          />
           <div>
-            <button className="bg-moderateBlue hover:opacity-50 text-white  rounded-lg px-8 py-3">
+            <button className="bg-moderateBlue hover:opacity-50 text-white  rounded-lg px-8 py-3 uppercase">
                 {
                     !replyingTo ? "Send" : "Reply"
                 }
