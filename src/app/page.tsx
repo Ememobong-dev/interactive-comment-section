@@ -1,7 +1,16 @@
+"use client";
+
 import CommentCards from "@/components/CommentCards";
 import data from "@/app/data.json";
+import ReplyBox from "@/components/ReplyBox";
+import { useState } from "react";
 
 export default function Home() {
+  const [showReplyArea, setShowReplyArea] = useState<number>();
+
+  const handleReplyButton = (id: number) => {
+    setShowReplyArea(id);
+  };
 
   return (
     <div className="px-14 py-10 max-w-[1400px]">
@@ -14,12 +23,13 @@ export default function Home() {
               userName={comment.user.username}
               createdAt={comment.createdAt}
               comment={comment.content}
+              handleReplyButton={() => handleReplyButton(comment.id)}
             />
 
             {comment.replies.length ? (
               <div className="flex gap-12 pl-12 my-8">
                 <div className="border-l-2 border-gray-300 "></div>
-                
+
                 <div className="flex flex-col gap-y-5">
                   {comment.replies.map((replies) => (
                     <div key={replies.id}>
@@ -31,17 +41,25 @@ export default function Home() {
                         comment={replies.content}
                         replyingTo={replies.replyingTo}
                         replies={true}
-                        isAuthorReply={replies.user.username == data.currentUser.username}
+                        isAuthorReply={
+                          replies.user.username == data.currentUser.username
+                        }
+                        handleReplyButton={() => handleReplyButton(replies.id)}
                       />
+                      {replies.id === showReplyArea && (
+                      <ReplyBox replyingTo={replies.user.username} />
+                    )}                
                     </div>
                     
                   ))}
                 </div>
-
-                
               </div>
             ) : (
               ""
+            )}
+
+            {(comment.id) === showReplyArea && (
+              <ReplyBox replyingTo={comment.user.username} />
             )}
           </div>
         ))}

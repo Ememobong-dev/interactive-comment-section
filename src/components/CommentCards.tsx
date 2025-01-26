@@ -7,6 +7,7 @@ import minusIcon from "../../public/images/icon-minus.svg";
 import replyIcon from "../../public/images/icon-reply.svg";
 import deleteIcon from "../../public/images/icon-delete.svg";
 import editIcon from "../../public/images/icon-edit.svg";
+// import ReplyBox from "./ReplyBox";
 
 type commentType = {
   numberOfLikes: number;
@@ -17,6 +18,7 @@ type commentType = {
   replies?: boolean;
   replyingTo?: string;
   isAuthorReply?: boolean;
+  handleReplyButton: VoidFunction
 };
 
 const CommentCards = ({
@@ -28,16 +30,19 @@ const CommentCards = ({
   replies,
   replyingTo,
   isAuthorReply,
+  handleReplyButton,
 }: commentType) => {
-    const [likeNum, setLikeNum] = useState(numberOfLikes);
+  const [likeNum, setLikeNum] = useState(numberOfLikes);
 
-    const handleUpVote = () => {
-        setLikeNum(prev => prev + 1)
-    }
 
-    const handleDownVote = () => {
-        setLikeNum(prev => prev - 1 > 0 ? prev - 1 : prev)
-    }
+  const handleUpVote = () => {
+    setLikeNum((prev) => prev + 1);
+  };
+
+  const handleDownVote = () => {
+    setLikeNum((prev) => (prev - 1 >= 0 ? prev - 1 : prev));
+  };
+
 
   return (
     <>
@@ -45,7 +50,7 @@ const CommentCards = ({
         <div className="flex items-center gap-8">
           <div className=" flex flex-col bg-lightGray rounded-lg py-3 px-3 items-center gap-3">
             <span className="cursor-pointer" onClick={handleUpVote}>
-              <Image src={plusIcon}  alt="plus icon" />
+              <Image src={plusIcon} alt="plus icon" />
             </span>
             <span>
               <p className="text-moderateBlue text-base font-bold">
@@ -84,7 +89,10 @@ const CommentCards = ({
                 </span>
               </div>
               {!isAuthorReply ? (
-                <div className="flex gap-2 cursor-pointer hover:opacity-50 items-center">
+                <div
+                  className="flex gap-2 cursor-pointer hover:opacity-50 items-center"
+                  onClick={handleReplyButton}
+                >
                   <span>
                     <Image src={replyIcon} alt="reply icon" />
                   </span>
@@ -127,6 +135,7 @@ const CommentCards = ({
           </div>
         </div>
       </div>
+      {/* {showReplyArea && <ReplyBox replyingTo={userName}  />} */}
     </>
   );
 };
