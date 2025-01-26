@@ -5,7 +5,7 @@ import juliusomoImg from "../../public/images/avatars/image-juliusomo.png";
 const ReplyBox = ({replyingTo} : {replyingTo : string}) => {
   return (
     <>
-      <div className="bg-white w-full p-8 my-3 rounded-lg">
+      <div className={` ${replyingTo ? "bg-white" : "bg-lightGrayishBlue"} w-full p-8 my-3 rounded-lg"`}>
         <div className="flex justify-between">
           <span>
             <Image src={juliusomoImg} alt="user " width={48} height={48} />
@@ -15,11 +15,13 @@ const ReplyBox = ({replyingTo} : {replyingTo : string}) => {
             rows={3}
             name=""
             id=""
-            defaultValue={`@${replyingTo}`}
+            defaultValue={`  ${replyingTo ? '@'+replyingTo : "" }`}
           ></textarea>
           <div>
             <button className="bg-moderateBlue hover:opacity-50 text-white  rounded-lg px-8 py-3">
-              Reply
+                {
+                    !replyingTo ? "Send" : "Reply"
+                }
             </button>
           </div>
         </div>
