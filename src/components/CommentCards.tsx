@@ -18,8 +18,12 @@ type commentType = {
   replies?: boolean;
   replyingTo?: string;
   isAuthorReply?: boolean;
-  handleReplyButton: VoidFunction;
+  handleViewReplyArea: VoidFunction;
   handleDelete: VoidFunction;
+  handleUpdate?: VoidFunction;
+  handleUpdateCommentChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  updateCommentValue: string;
+  updateBtnCLicked?: boolean
 };
 
 const CommentCards = ({
@@ -32,12 +36,16 @@ const CommentCards = ({
   replies,
   replyingTo,
   isAuthorReply,
-  handleReplyButton,
+  handleViewReplyArea,
   handleDelete,
+  handleUpdate,
+  handleUpdateCommentChange,
+  updateCommentValue,
+  updateBtnCLicked
 }: commentType) => {
   const [likeNum, setLikeNum] = useState(numberOfLikes);
   const [editPostId, setEditPostId] = useState<number>();
-
+  // const [updateBtnCLicked, setUpdateBtnCLicked] = useState(false);
 
   const handleUpVote = () => {
     setLikeNum((prev) => prev + 1);
@@ -50,7 +58,6 @@ const CommentCards = ({
   const handleEdit = (id: number) => {
     setEditPostId(id);
   };
-
 
   return (
     <>
@@ -99,7 +106,7 @@ const CommentCards = ({
               {!isAuthorReply ? (
                 <div
                   className="flex gap-2 cursor-pointer hover:opacity-50 items-center"
-                  onClick={handleReplyButton}
+                  onClick={handleViewReplyArea}
                 >
                   <span>
                     <Image src={replyIcon} alt="reply icon" />
@@ -110,8 +117,10 @@ const CommentCards = ({
                 </div>
               ) : (
                 <div className="flex gap-8 cursor-pointer items-center">
-                  <div className="flex items-center hover:opacity-50 gap-2"
-                  onClick={handleDelete}>
+                  <div
+                    className="flex items-center hover:opacity-50 gap-2"
+                    onClick={handleDelete}
+                  >
                     <span>
                       <Image src={deleteIcon} alt="reply icon" />
                     </span>
@@ -134,18 +143,33 @@ const CommentCards = ({
               )}
             </div>
             <div>
-              {editPostId === id ? (
-                <span>
-                  <textarea
-                    className="rounded-lg w-full focus:border-moderateBlue outline-0  border border-moderateBlue py-5 px-8 bg-white text-grayishBlue"
-                    name=""
-                    cols={35}
-                    rows={3}
-                    value={`@${replyingTo} ${comment}`}
-                  />
-                </span>
+              {(editPostId === id && !updateBtnCLicked) ? (
+                <>
+                  <span>
+                    <textarea
+                      className="rounded-lg w-full focus:border-moderateBlue outline-0  border border-moderateBlue py-5 px-8 bg-white text-grayishBlue"
+                      name=""
+                      cols={35}
+                      rows={3}
+                      // value={`@${replyingTo} ${comment}`}
+                      value={updateCommentValue}
+                      onChange={handleUpdateCommentChange}
+                    
+                      // onChange={handleUpdateCommentChange}
+                    />
+                  </span>
+
+                  <span className="flex justify-end mt-2 ">
+                    <button
+                      onClick={handleUpdate}
+                      className="bg-moderateBlue hover:opacity-50  text-white  rounded-lg px-8 py-3 uppercase"
+                    >
+                      Update
+                    </button>
+                  </span>
+                </>
               ) : (
-                <span className="text-grayishBlue">
+                <span className="text-grayishBlue w-full">
                   {replies && (
                     <span className="text-moderateBlue font-bold">
                       {" "}

@@ -3,28 +3,127 @@
 import CommentCards from "@/components/CommentCards";
 import data from "@/app/data.json";
 import ReplyBox from "@/components/ReplyBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "antd";
+import { CommentDataInterface } from "@/interface";
+import moment from "moment";
 
 export default function Home() {
   const [showReplyArea, setShowReplyArea] = useState<number>();
-  const [deletePostId, setPostId] = useState<number>();
+  const [deletePostId, setDeletePostId] = useState<number>();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [dataClone, setDataClone] = useState<CommentDataInterface>( JSON.parse(localStorage.getItem("comment-data") || JSON.stringify(data)));
 
-  const handleReplyButton = (id: number) => {
+  const [sendReplyInputChange, setSendReplyInputChange] = useState<string>("");
+  const [replyInputChange, setReplyInputChange] = useState<string>("");
+  const [updateCommentInputChange, setUpdateCommentInputChange] = useState<string>("");
+  const [updateBtnClicked, setUpdateBtnClicked] = useState(false);
+
+
+
+  const handleViewReplyArea = (id: number) => {
     setShowReplyArea(id);
+  };  
+
+  const handleSendReplyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSendReplyInputChange(e.target.value)
+  }
+
+  const handleReplyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setReplyInputChange(e.target.value)
+  }
+
+  const handleUpdateCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setUpdateCommentInputChange(e.target.value);
+  }
+
+  const sendData = {
+    id: Math.floor(Math.random() * (30 - 3) + 3) ,
+    content: sendReplyInputChange,
+    createdAt: moment().startOf('hour').fromNow(),
+    score: 0,
+    user: dataClone.currentUser,
+    replies: []
+  }
+
+  
+
+  // SEND COMMENT
+  const handleSendComment = () => {
+    // I need count, img, username, date, comment
+    const newCommentObj = {...dataClone};
+    newCommentObj.comments.push({...sendData});
+    setDataClone( {...newCommentObj} )
+    setSendReplyInputChange("");
+  }
+
+
+ // REPLY COMMENT
+  const handleReplyComment = (id: number) => {
+    const newReplyObj = {...dataClone};
+    const findSelectedCommentID = newReplyObj.comments.find( (item) => id === item.id);
+
+    if(findSelectedCommentID) {
+      findSelectedCommentID.replies.push({...sendData, replyingTo: findSelectedCommentID.user.username})
+      const replyObj = {...newReplyObj, findSelectedCommentID};
+      setDataClone({...replyObj});
+      setShowReplyArea(-1);
+      setSendReplyInputChange("");
+    }
+  }
+
+
+  // DELETE COMMENT
+  const handleShowDeleteModal = (id: number) => {
+    setDeletePostId(id);
+    setShowDeleteModal(true);
+    console.log(deletePostId);
+    console.log(dataClone);
   };
 
-  const deleteComment = (id: number) => {
-    setPostId(id);
-    setShowDeleteModal(true);
-  };
+  const handleDeleteComment = () => {
+    const newObj = {...dataClone};
+    const filteredNewObj = newObj.comments.filter( (item) => item.id !== deletePostId);
+    const filteredData = {...newObj, comments: [...filteredNewObj]}
+    setDataClone({...filteredData})
+    setShowDeleteModal(false)
+  }
+
+
+
+  // UPDATE COMMENT
+
+  console.log("I am Data Clone", dataClone) 
+
+  const handleUpdateButton = (id: number) => {
+    const newObj = {...dataClone};
+    const newContentObj = newObj.comments
+    const findSelectedCommentID = newContentObj.find( (item) => item.id === id);
+
+    if(findSelectedCommentID) {
+      findSelectedCommentID.content = updateCommentInputChange
+      setUpdateCommentInputChange("");
+      console.log("I am Data Clone", dataClone) 
+    }
+    setUpdateBtnClicked(true)
+  }
+
+    useEffect(() => {
+      localStorage.setItem("comment-data", JSON.stringify(dataClone))
+    }, [dataClone])
+  
+
+
+
+
+
+
 
   return (
     <div className=" max-w-[1400px]">
       <div className="px-14 py-10">
         <div className="flex flex-col items-center gap-y-5">
-          {data.comments.map((comment) => (
+          {dataClone.comments.map((comment) => (
             <div key={comment.id}>
               <CommentCards
                 id={comment.id}
@@ -33,12 +132,28 @@ export default function Home() {
                 userName={comment.user.username}
                 createdAt={comment.createdAt}
                 comment={comment.content}
-                handleReplyButton={() => handleReplyButton(comment.id)}
-                handleDelete={() => deleteComment(comment.id)}
+                handleViewReplyArea={() => handleViewReplyArea(comment.id)}
+                handleDelete={() => handleShowDeleteModal(comment.id)}
+                isAuthorReply={
+                  comment.user.username == dataClone.currentUser.username
+                }
+                handleUpdate={() => handleUpdateButton(comment.id)}
+                handleUpdateCommentChange={handleUpdateCommentChange}
+                updateCommentValue={updateCommentInputChange}
+                updateBtnCLicked = {updateBtnClicked}
+
               />
 
               {comment.id === showReplyArea && (
-                <ReplyBox replyingTo={comment.user.username} />
+                <ReplyBox 
+                handleViewReplyArea ={() => handleReplyComment (comment.id)} 
+                replyingTo={comment.user.username} 
+                handleSendReplyChange={handleSendReplyChange}
+                handleReplyChange={handleReplyChange}
+                sendReplyInputChange={sendReplyInputChange}
+                replyInputChange={replyInputChange}
+                />
+                
               )}
 
               {comment.replies.length ? (
@@ -58,15 +173,29 @@ export default function Home() {
                           replyingTo={replies.replyingTo}
                           replies={true}
                           isAuthorReply={
-                            replies.user.username == data.currentUser.username
+                            replies.user.username == dataClone.currentUser.username
                           }
-                          handleReplyButton={() =>
-                            handleReplyButton(replies.id)
+                          handleViewReplyArea={() =>
+                            handleViewReplyArea(replies.id)
                           }
-                          handleDelete={() => deleteComment(replies.id)}
+                          handleDelete={() => handleShowDeleteModal(replies.id)}
+
+                          handleUpdate={() => handleUpdateButton(comment.id)}
+                          handleUpdateCommentChange={handleUpdateCommentChange}
+                          updateCommentValue={updateCommentInputChange}
+                          updateBtnCLicked = {updateBtnClicked}
+
+
                         />
                         {replies.id === showReplyArea && (
-                          <ReplyBox replyingTo={replies.user.username} />
+                          <ReplyBox 
+                          handleViewReplyArea ={() => handleReplyComment (replies.id)} 
+                          replyingTo={replies.user.username} 
+                          handleSendReplyChange={handleSendReplyChange}
+                          handleReplyChange={handleReplyChange}
+                          sendReplyInputChange={sendReplyInputChange}
+                          replyInputChange={replyInputChange}
+                          />
                         )}
                       </div>
                     ))}
@@ -80,7 +209,14 @@ export default function Home() {
         </div>
       </div>
       <div className="sticky bottom-0 ">
-        <ReplyBox replyingTo="" />
+        <ReplyBox 
+        handleSendButton ={handleSendComment} 
+        replyingTo=""
+        handleSendReplyChange={handleSendReplyChange} 
+        handleReplyChange={handleReplyChange}        
+        sendReplyInputChange={sendReplyInputChange}   
+        replyInputChange={replyInputChange}
+         />
       </div>
 
       <Modal
@@ -98,10 +234,10 @@ export default function Home() {
             comment and can&apos;t be undone.
           </p>
           <div className="flex gap-5 font-rubikLight font-bold ">
-            <button className="py-3 px-8 text-white  rounded-lg bg-grayishBlue">
+            <button className="py-3 px-8 text-white  rounded-lg bg-grayishBlue" onClick={() => setShowDeleteModal(false)}>
               NO, CANCEL
             </button>
-            <button className="py-3 px-8 text-white rounded-lg bg-softRed">
+            <button className="py-3 px-8 text-white rounded-lg bg-softRed" onClick={handleDeleteComment}>
               YES, DELETE
             </button>
           </div>
