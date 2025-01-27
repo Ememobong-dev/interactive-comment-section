@@ -82,16 +82,22 @@ export default function Home() {
 
   const handleDeleteComment = () => {
     const newObj = {...dataClone};
+
     const filteredNewObj = newObj.comments.filter( (item) => item.id !== deletePostId);
     const filteredData = {...newObj, comments: [...filteredNewObj]}
     setDataClone({...filteredData})
     setShowDeleteModal(false)
+
+   
+    // TRY TO FIX FOR REPLIES
+    const filteredRepliesObj = newObj.comments.map((item) => item.replies.find( (replyItem) => replyItem.id === deletePostId));
+    const xyz = filteredRepliesObj.filter((item) => item != undefined);
+    console.log("I AM FILTERERED REPLIES OBJ",  filteredRepliesObj);
+    console.log("I AM XYZ",  xyz);
   }
 
 
-
   // UPDATE COMMENT
-
   console.log("I am Data Clone", dataClone) 
 
   const handleUpdateButton = (id: number) => {
