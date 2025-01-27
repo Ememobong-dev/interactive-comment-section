@@ -39,7 +39,6 @@ export default function Home() {
 
   const sendData = {
     id: Math.floor(Math.random() * (30 - 3) + 3) ,
-    content: sendReplyInputChange,
     createdAt: moment().startOf('hour').fromNow(),
     score: 0,
     user: dataClone.currentUser,
@@ -52,7 +51,7 @@ export default function Home() {
   const handleSendComment = () => {
     // I need count, img, username, date, comment
     const newCommentObj = {...dataClone};
-    newCommentObj.comments.push({...sendData});
+    newCommentObj.comments.push({...sendData, content: sendReplyInputChange});
     setDataClone( {...newCommentObj} )
     setSendReplyInputChange("");
   }
@@ -64,11 +63,11 @@ export default function Home() {
     const findSelectedCommentID = newReplyObj.comments.find( (item) => id === item.id);
 
     if(findSelectedCommentID) {
-      findSelectedCommentID.replies.push({...sendData, replyingTo: findSelectedCommentID.user.username})
+      findSelectedCommentID.replies.push({...sendData, replyingTo: findSelectedCommentID.user.username, content: replyInputChange})
       const replyObj = {...newReplyObj, findSelectedCommentID};
       setDataClone({...replyObj});
       setShowReplyArea(-1);
-      setSendReplyInputChange("");
+      setReplyInputChange("");
     }
   }
 
